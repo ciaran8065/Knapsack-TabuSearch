@@ -1,7 +1,3 @@
-source("summFn.r") #gets the summFn function, requires both this file and summFn to be in the same directory.
-source("evalFn.r") #gets the evaluate , requires both this file and evalFn to be in the same directory.
-setwd("H:/tabuSearch/maximiseTabu")
-
 tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
                       neigh = size, listSize = 9, nRestarts = 10, repeatAll = 1,
                       verbose = FALSE)
