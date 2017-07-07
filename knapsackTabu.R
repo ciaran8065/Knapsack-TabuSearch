@@ -184,15 +184,19 @@ eval<-function(conf){
   res[3]<-ifelse(cW>Wm && cW<lim,1,0) #if the weight is greater than Wm AND less than the limit return 1 else return 0
   return(res)
 }
-
+values<-numeric(50)
+for(i in 1:50){
 res<-tabuSearch3(size=8,iters=50,objFunc=eval,listSize=4,nRestarts=10)
 v<-res$eUtilityKeep[,3]==0
 exc<-which(res$eUtilityKeep[,3]!=0) #where it is not 0, we can exclude these so that the which.max correctly matches up
 fixed<-res$configKeep[-exc,]
 finalConfig<-fixed[which.max((res$eUtilityKeep[res$eUtilityKeep[,3]==0,])[,1]),]
 ans<-eval(finalConfig)
-cat(" Value found: ",ans[1],"\n","Weight used: ",ans[2],"\n")
-print(finalConfig)
+values[i]<-ans[1]
+}
+summary(values)
+#cat(" Value found: ",ans[1],"\n","Weight used: ",ans[2],"\n")
+#print(finalConfig)
 
 #summ(res,verbose=T)
 
