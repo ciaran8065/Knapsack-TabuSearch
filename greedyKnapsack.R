@@ -185,7 +185,7 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
   }#end of algorithm, proceed past this point when j>repeatAll
   
   #putting together the end results
-  endResult <- list(type = "binary configuration", configKeep = configKeep[1:(iter - 1), ], eUtilityKeep = eUtilityKeep[1:(iter - 1),], iters = iters, neigh = neigh, listSize = listSize, repeatAll = repeatAll)
+  endResult <- list(type = "binary configuration", configKeep = configKeep[1:(iter - 1), ], eUtilityKeep = eUtilityKeep[1:(iter - 1),], iters = iters, neigh = neigh, listSize = listSize, repeatAll = repeatAll,weights=weights,values=values,limit=limit)
   class(endResult) = "tabu"
   return(endResult)
   
@@ -208,19 +208,19 @@ eval<-function(conf,weights,values,limit){
   res[3]<-ifelse(cW>Wm && cW<lim,1,0) #if the weight is greater than Wm AND less than the limit return 1 else return 0
   return(res)
 }
-values<-numeric(50)
-for(i in 1:50){
-  res<-tabuSearch3(size=8,iters=50,objFunc=eval,listSize=4,nRestarts=10,weights=ws,values=vals,limit=400)
+
+summ<-function (res)
+{
   v<-res$eUtilityKeep[,3]==0
   exc<-which(res$eUtilityKeep[,3]!=0) #where it is not 0, we can exclude these so that the which.max correctly matches up
   fixed<-res$configKeep[-exc,]
   finalConfig<-fixed[which.max((res$eUtilityKeep[res$eUtilityKeep[,3]==0,])[,1]),]
-  ans<-eval(finalConfig,ws,vals,400)
+  ans<-eval(finalConfig,res$weights,res$values,res$limit)
   values[i]<-ans[1]
+  cat(" Value found: ",ans[1],"\n","Weight used: ",ans[2],"\n")
+  print(rbind(finalConfig))
 }
-summary(values)
-#cat(" Value found: ",ans[1],"\n","Weight used: ",ans[2],"\n")
-#print(finalConfig)
 
-#summ(res,verbose=T)
+res<-tabuSearch3(size=8,iters=50,objFunc=eval,listSize=4,nRestarts=10,weights=ws,values=vals,limit=400)
+summ(res)
 
