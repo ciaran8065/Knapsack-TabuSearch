@@ -26,18 +26,27 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
   if(is.null(limit)){
     stop("A maximum weight must be provided")
   }
+  if(length(values)!=length(weights)){
+    stop("Weights and Value vectors must be of equal length")
+  }
+  if(length(values)!=size){
+    stop("Size must equal the number of values")
+  }
+  if(length(weights)!=size){
+    stop("Size must equal the number of weights")
+  }
   if (is.null(config)) { #if no config create a default.
-    greedy<-function(w,v){
+    greedy<-function(size,w,v,limit){
       vals<-v
       ws<-w
       rs<-vals/ws
       ind<-sort.int(rs,decreasing=T,index.return=T)$ix
       reOrderedWeights<-(ws[ind])
       curW<-0
-      Wm<-400
-      conf<-numeric(8)
+      Wm<-limit
+      conf<-numeric(size)
       track<-1
-      while(track<=8){
+      while(track<=size){
         if(curW+reOrderedWeights[track]>Wm){
           break
         }else{
@@ -48,7 +57,7 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
       }
       return(conf)
     }
-    config<-greedy(weights,values)
+    config<-greedy(size,weights,values,limit)
   }else if (size != length(config)) {
     stop("Length of the starting configuration != size")
   }
@@ -191,8 +200,8 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
   
 }
 
-vals<-c(50,40,30,60,100,150,120,70)
-ws<-c(50,30,60,50,50,50,50,200)
+vals<-c(50,40,30,60,100,150,120,70,40)
+ws<-c(50,30,60,50,50,50,50,200,10)
 
 eval<-function(conf,weights,values,limit){
   Wm<-limit
@@ -221,6 +230,5 @@ summ<-function (res)
   print(rbind(finalConfig))
 }
 
-res<-tabuSearch3(size=8,iters=50,objFunc=eval,listSize=4,nRestarts=10,weights=ws,values=vals,limit=400)
+res<-tabuSearch3(size=9,iters=50,objFunc=eval,listSize=4,nRestarts=10,weights=ws,values=vals,limit=400)
 summ(res)
-
