@@ -27,7 +27,7 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
     stop("A maximum weight must be provided")
   }
   if (is.null(config)) { #if no config create a default.
-    greedy<-function(w,v){
+    greedy<-function(size,w,v){
       vals<-v
       ws<-w
       rs<-vals/ws
@@ -35,9 +35,9 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
       reOrderedWeights<-(ws[ind])
       curW<-0
       Wm<-400
-      conf<-numeric(8)
+      conf<-numeric(size)
       track<-1
-      while(track<=8){
+      while(track<=size){
         if(curW+reOrderedWeights[track]>Wm){
           break
         }else{
@@ -48,7 +48,7 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
       }
       return(conf)
     }
-    config<-greedy(weights,values)
+    config<-greedy(size,weights,values)
   }else if (size != length(config)) {
     stop("Length of the starting configuration != size")
   }
@@ -165,9 +165,10 @@ tabuSearch3<-function(size = 10, iters = 100, objFunc = NULL, config = NULL,
   return(endResult)
   
 }
-
-vals<-c(50,40,30,60,100,150,120,70)
-ws<-c(50,30,60,50,50,50,50,200)
+#vals<-c(50,40,30,60,100,150,120,70)
+#ws<-c(50,30,60,50,50,50,50,200)
+vals<-c(50,40,30,60,100,150,120,70,80,50,60,90,100,40,50,60)
+ws<-c(50,30,60,50,50,50,50,200,20,50,80,60,70,90,50,100)
 
 eval<-function(conf,weights,values,limit){
   Wm<-limit
@@ -202,7 +203,7 @@ library(adagio)
 resultsTabu<-numeric(50)
 resultsAdagio<-numeric(50)
 for(i in 1:50){
-  res<-tabuSearch3(size=8,iters=50,objFunc=eval,listSize=4,nRestarts=10,weights=ws,values=vals,limit=400)
+  res<-tabuSearch3(size=16,iters=50,objFunc=eval,listSize=12,nRestarts=10,weights=ws,values=vals,limit=400)
   v<-res$eUtilityKeep[,3]==0
   exc<-which(res$eUtilityKeep[,3]!=0) #where it is not 0, we can exclude these so that the which.max correctly matches up
   fixed<-res$configKeep[-exc,]
